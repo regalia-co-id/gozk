@@ -283,7 +283,7 @@ func (zk *ZK) GetUsers() error {
 	return nil
 }
 
-func (zk *ZK) LiveCapture(ID int) (chan *Attendance, error) {
+func (zk *ZK) LiveCapture(ID uint) (chan *Attendance, error) {
 	if zk.capturing != nil {
 		return nil, errors.New("Is capturing")
 	}
@@ -318,7 +318,7 @@ func (zk *ZK) LiveCapture(ID int) (chan *Attendance, error) {
 			close(c)
 
 			data := url.Values{}
-			data.Set("id", strconv.Itoa(ID))
+			data.Set("id", strconv.Itoa(int(ID)))
 
 			req, _ := http.NewRequest("POST", "http://localhost:3002/attendance/non_active", strings.NewReader(data.Encode()))
 			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
