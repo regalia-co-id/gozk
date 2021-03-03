@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"net"
+	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -281,7 +283,7 @@ func (zk *ZK) GetUsers() error {
 	return nil
 }
 
-func (zk *ZK) LiveCapture() (chan *Attendance, error) {
+func (zk *ZK) LiveCapture(ID int) (chan *Attendance, error) {
 	if zk.capturing != nil {
 		return nil, errors.New("Is capturing")
 	}
@@ -314,6 +316,17 @@ func (zk *ZK) LiveCapture() (chan *Attendance, error) {
 			log4go.Info("Stopped capturing")
 			zk.regEvent(0)
 			close(c)
+
+			data := url.Values{}
+			data.Set("id", strconv.Itoa(ID))
+
+			req, _ := http.NewRequest("POST", "http://localhost:3002/attendance/non_active", strings.NewReader(data.Encode()))
+			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+			resp, _ := http.DefaultClient.Do(req)
+
+			resp.Body.Close()
+			log4go.Info("Send message stopped capturing")
 		}()
 
 		for {
