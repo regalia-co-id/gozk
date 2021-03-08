@@ -198,3 +198,9 @@ func getDataSize(rescode int, data []byte) (int, error) {
 
 	return 0, nil
 }
+
+func encodeTime(t time.Time) int {
+	d := (((t.Year()%100)*12*31+((int(t.Month())-1)*31)+t.Day()-1)*(24*60*60) + (t.Hour()*60+t.Minute())*60 + t.Second())
+
+	return d
+}

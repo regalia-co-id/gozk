@@ -283,6 +283,21 @@ func (zk *ZK) GetUsers() error {
 	return nil
 }
 
+func (zk *ZK) SetTime() error {
+	timestamp := time.Now()
+	command_string, _ := newBP().Pack([]string{"I"}, []interface{}{encodeTime(timestamp)})
+	res, err := zk.sendCommand(CMD_SET_TIME, command_string, 8)
+	if err != nil {
+		return err
+	}
+
+	if !res.Status {
+		return errors.New("Failed to set time device")
+	}
+
+	return nil
+}
+
 func (zk *ZK) LiveCapture(ID uint) (chan *Attendance, error) {
 	if zk.capturing != nil {
 		return nil, errors.New("Is capturing")
