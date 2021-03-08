@@ -283,8 +283,7 @@ func (zk *ZK) GetUsers() error {
 	return nil
 }
 
-func (zk *ZK) SetTime() error {
-	timestamp := time.Now()
+func (zk *ZK) SetTime(timestamp time.Time) error {
 	command_string, _ := newBP().Pack([]string{"I"}, []interface{}{encodeTime(timestamp)})
 	res, err := zk.sendCommand(CMD_SET_TIME, command_string, 8)
 	if err != nil {
